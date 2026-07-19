@@ -2,8 +2,6 @@
 
 A Java desktop application for monitoring and visualizing solar energy production, battery status, and grid usage with real-time statistics and historical data analysis.
 
-> **TML** stands for **Tiny Memories Laser**, a registered business (API-led Pty Ltd, ABN) that operated from 2018-2024. This Solar Energy Monitor project represents the software/data analysis division, extending TML's expertise into renewable energy system optimization and monitoring.
-
 ---
 
 ⚠️ **DISCLAIMER**: Use this project at your own risk. No guarantees are provided, and no support is available. This is a personal project shared as-is for educational and reference purposes only. Users are responsible for their own implementation, testing, and any consequences arising from use of this project.
@@ -12,16 +10,16 @@ A Java desktop application for monitoring and visualizing solar energy productio
 
 ## Project Information
 
-- **Author**: Adilson Dias (API-Led Pty Ltd → Tiny Memories Laser (TML))
+- **Author**: Adilson Dias
 - **Version**: 1.0.1-SNAPSHOT
 - **Language**: Java (JDK 17+)
 - **Type**: Desktop Application (Java Swing GUI)
 - **License**: Provided as-is for educational purposes
-- **GitHub**: https://github.com/adilsondias-engineer
+- **GitHub**: <https://github.com/adilsondias-engineer>
 
 ## Overview
 
-Solar Energy Monitor is a comprehensive desktop application that integrates with real-time solar PV systems. The system collects data from solar inverters, battery storage, and grid meters to provide actionable insights into energy production, consumption, and financial impact. Perfect for homeowners with solar installations, energy management optimization, and cost analysis.
+Solar Energy Monitor is a desktop application that integrates with real-time solar PV systems. It collects data from solar inverters, battery storage, and grid meters (via a MySQL database populated by a separate collection process) to provide insights into energy production, consumption, and financial impact. Built originally for my own home solar installation to track energy flow and cost/revenue over time.
 
 ## Features
 
@@ -41,13 +39,13 @@ Solar Energy Monitor is a comprehensive desktop application that integrates with
 
 ### Financial Analysis
 - **Daily Energy Breakdown**: Usage and cost per day
-- **Revenue Tracking**: Solar export revenue at $0.067/kWh
-- **Grid Cost Analysis**: Import costs at $0.19030/kWh
+- **Revenue Tracking**: Solar export revenue (rate configurable)
+- **Grid Cost Analysis**: Import costs (rate configurable)
 - **Monthly Aggregation**: Cumulative monthly statistics and trends
 - **ROI Projections**: Annual savings calculations
 
 ### Battery Management
-- **Capacity Monitoring**: 11.8 kWh battery capacity tracking
+- **Capacity Monitoring**: Configurable battery capacity tracking
 - **Discharge Forecasting**: Estimated time until full discharge
 - **Charge Status**: Charging/discharging power in real-time
 - **Health Trends**: Historical battery performance data
@@ -87,40 +85,18 @@ Solar Energy Monitor is a comprehensive desktop application that integrates with
         └──────────────────────────────────┘
 ```
 
-## Hardware Requirements
-
-### System Requirements
-| Component | Specification |
-|-----------|---------------|
-| **CPU** | Intel i5 or equivalent (minimal) |
-| **RAM** | 4GB minimum, 8GB recommended |
-| **Storage** | 500MB for application + database |
-| **Display** | 1920x1080 or higher recommended |
-| **OS** | Windows, Linux, macOS |
-
-### Solar System Integration
-| Component | Specification |
-|-----------|---------------|
-| **Solar Battery** | 11.8 kWh (configurable) |
-| **Data Source** | MySQL database from inverter integration |
-| **Data Rate** | 10-second polling interval |
-| **Timezone** | System timezone (configurable) |
-
 ## Software Requirements
 
-### Prerequisites
-| Component | Version | Purpose |
-|-----------|---------|---------|
-| **Java Development Kit** | 17 or higher | Application runtime |
-| **Apache Maven** | 3.x | Build and dependency management |
-| **MySQL Server** | 5.7 or higher | Data persistence and historical records |
-| **MySQL Connector/J** | 8.0.30 | JDBC database connectivity |
+| Component                | Version       | Purpose                                 |
+| ------------------------ | -------------- | ----------------------------------------- |
+| **Java Development Kit** | 17 or higher  | Application runtime                     |
+| **Apache Maven**         | 3.x           | Build and dependency management         |
+| **MySQL Server**         | 5.7 or higher | Data persistence and historical records |
+| **MySQL Connector/J**    | 8.0.30        | JDBC database connectivity              |
 
 ### Dependencies
 
-The project uses Maven for dependency management. Key libraries:
-
-```xml
+```
 <!-- Data Visualization -->
 <dependency>
     <groupId>org.jfree</groupId>
@@ -174,17 +150,18 @@ CREATE TABLE solarusage (
 
 ### Step 3: Create Database User
 
+**Replace the placeholders below with your own credentials — never use example values in a real deployment:**
+
 ```sql
-CREATE USER 'solarpv'@'localhost' IDENTIFIED BY 'solarpvpw';
-GRANT ALL PRIVILEGES ON solarpv.* TO 'solarpv'@'localhost';
+CREATE USER 'your_db_user'@'localhost' IDENTIFIED BY 'CHANGE_ME_TO_A_STRONG_PASSWORD';
+GRANT ALL PRIVILEGES ON solarpv.* TO 'your_db_user'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
 ### Step 4: Verify Connection
 
-```bash
-mysql -u solarpv -p
-# Enter password: solarpvpw
+```
+mysql -u your_db_user -p
 # Should show: mysql>
 ```
 
@@ -192,28 +169,22 @@ mysql -u solarpv -p
 
 ### Step 1: Clone Repository
 
-```bash
+```
 git clone https://github.com/adilsondias-engineer/SolarEnergyMonitor.git
 cd SolarEnergyMonitor
 ```
 
 ### Step 2: Build with Maven
 
-```bash
+```
 mvn clean package
 ```
-
-This will:
-- Download all dependencies
-- Compile source code
-- Run tests
-- Package into executable JAR: `SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar`
 
 Build output will be in the `target/` directory.
 
 ### Step 3: Verify Build
 
-```bash
+```
 ls -la target/SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar
 ```
 
@@ -221,35 +192,27 @@ ls -la target/SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar
 
 ### Option 1: Windows Batch File (Easiest)
 
-```bash
+```
 run.bat
 ```
 
-This script automatically handles Java path and memory settings.
-
 ### Option 2: Maven (Development)
 
-```bash
+```
 mvn exec:java -Dexec.mainClass="au.net.dias.solar.Monitor"
 ```
 
-Useful for development and debugging.
-
 ### Option 3: Direct JAR Execution
 
-```bash
+```
 java -jar target/SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 ### Option 4: With Custom Memory Settings
 
-```bash
+```
 java -Xmx1024m -Xms512m -jar target/SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar
 ```
-
-Parameters:
-- `-Xmx1024m`: Maximum heap size (1GB)
-- `-Xms512m`: Initial heap size (512MB)
 
 ## Project Structure
 
@@ -265,9 +228,6 @@ SolarEnergyMonitor/
 │                           ├── Monitor.java          # Main application & GUI (566+ lines)
 │                           └── SolarData.java        # Data model class
 ├── target/                                           # Build output directory
-│   ├── classes/                                      # Compiled classes
-│   ├── SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar
-│   └── ...
 ├── pom.xml                                           # Maven configuration
 ├── run.bat                                           # Windows launch script
 └── README.md                                         # This file
@@ -277,47 +237,41 @@ SolarEnergyMonitor/
 
 ### Database Connection
 
-Edit `Monitor.java` (line 566) if using non-default credentials:
+Edit `Monitor.java` if using non-default credentials:
 
 ```java
 Connection con = DriverManager.getConnection(
-    "jdbc:mysql://localhost:3306/solarpv", 
-    "solarpv", 
-    "solarpvpw"
+    "jdbc:mysql://localhost:3306/solarpv",
+    "your_db_user",
+    "your_password"
 );
 ```
 
-Parameters:
-- `localhost:3306` - MySQL server host and port
-- `solarpv` - Database name
-- `"solarpv"` - Username
-- `"solarpvpw"` - Password
+**Do not commit real database credentials to source control** — for anything beyond local/personal use, move these into an external config file or environment variables instead of hardcoding them in `Monitor.java`.
 
 ### Battery Capacity
 
-Default is 11.8 kWh. To modify, edit `Monitor.java` line 394:
+Default is a placeholder value. To modify, edit `Monitor.java`:
 
 ```java
-double total_bat_kwh = 11.8 * 1000;  // Battery capacity in Wh (11.8 kWh)
+double total_bat_kwh = YOUR_CAPACITY_KWH * 1000;  // Battery capacity in Wh
 ```
 
-Change `11.8` to your actual battery capacity in kWh.
+Set `YOUR_CAPACITY_KWH` to your actual battery capacity in kWh.
 
 ### Electricity Rates
 
-Configure your local electricity rates in `Monitor.java` (`createDataset()` method):
+Configure your local electricity rates in `Monitor.java` (`createDataset()` method) — these are placeholders and will vary by provider/region/plan:
 
-**Export Rate** (line 317):
+**Export Rate:**
 ```java
-dailyExport * 0.067      // Currently $0.067 per kWh
+dailyExport * YOUR_EXPORT_RATE  // $ per kWh, from your utility provider
 ```
 
-**Import Rate** (line 348):
+**Import Rate:**
 ```java
-dailyGrid * 0.19030      // Currently $0.19030 per kWh
+dailyGrid * YOUR_IMPORT_RATE    // $ per kWh, from your utility provider
 ```
-
-Find current rates from your utility provider and update these values.
 
 ## Usage
 
@@ -354,15 +308,6 @@ Find current rates from your utility provider and update these values.
 - Interactive zoom and pan capabilities
 - Date range selection
 
-### Using the Interface
-
-1. **View Real-Time Data**: Top-right panel updates automatically
-2. **Analyze Daily Usage**: Check bottom-left for hourly breakdown
-3. **Review Costs**: See daily and monthly cost analysis
-4. **Zoom Charts**: Click and drag on chart to zoom into time periods
-5. **Refresh Data**: Click "Refresh" button to force data update
-6. **Export Data**: Use standard copy/paste from tables
-
 ## Data Flow
 
 ```
@@ -371,179 +316,10 @@ Database Entry → Parser → Calculations → Display Updates
 [Time Series] [Power/Voltage] [Costs/ROI] [Charts & Tables]
 ```
 
-### Data Processing Steps
-
 1. **Read**: Query MySQL `solarusage` table at 10-second intervals
 2. **Parse**: Extract solar power, grid power, battery power, battery capacity
-3. **Calculate**:
-   - Daily totals (kWh per day)
-   - Revenue from grid export
-   - Costs from grid import
-   - Battery discharge time remaining
+3. **Calculate**: Daily totals, revenue, costs, battery discharge time remaining
 4. **Display**: Update GUI charts, tables, and statistics
-
-## Cost Calculations
-
-The application uses utility rates to calculate financial impact:
-
-### Export Revenue
-```
-Daily Export Revenue = (Solar kWh Exported) × $0.067/kWh
-```
-
-### Grid Import Cost
-```
-Daily Import Cost = (Grid kWh Imported) × $0.19030/kWh
-```
-
-### Net Daily Benefit
-```
-Net Benefit = Export Revenue - Import Cost
-```
-
-### Monthly/Annual Projections
-Aggregated from daily calculations with trend analysis.
-
-## Performance Considerations
-
-### Database Queries
-- 10-second polling interval balances real-time updates with database load
-- Indexed datetime column enables fast historical queries
-- Consider archiving old data (>6 months) for better query performance
-
-### GUI Rendering
-- Charts render on separate thread to prevent UI freezing
-- Large datasets (>1 year history) may impact responsiveness
-- Consider limiting chart display to 90-day rolling window
-
-### Memory Usage
-- Typical memory footprint: 512MB - 1GB
-- Increase heap size for long-term operation: `-Xmx2048m`
-
-### Optimization Tips
-- Archive data older than 1 year to separate table
-- Use database maintenance: `OPTIMIZE TABLE solarusage;`
-- Monitor MySQL process for slow queries: `SHOW PROCESSLIST;`
-
-## Customization
-
-### Changing Time Interval
-
-To modify the data refresh interval (default 10 seconds), find the timer in `Monitor.java`:
-
-```java
-Timer timer = new Timer(10000, ...); // 10000 milliseconds = 10 seconds
-```
-
-Change `10000` to desired milliseconds.
-
-### Adding More Data Sources
-
-The application architecture supports adding additional sensors:
-
-1. Add columns to `solarusage` table
-2. Update `SolarData.java` to parse new fields
-3. Modify `Monitor.java` display panels to show new data
-
-### Custom Chart Colors
-
-Edit `createDataset()` and chart rendering code to modify visualization colors.
-
-## Troubleshooting
-
-### Database Connection Issues
-
-**Problem**: "SQLException: No suitable driver found"
-- **Solution**: Verify `mysql-connector-java-8.0.30.jar` is in classpath
-- Check Maven dependencies: `mvn dependency:tree`
-- Rebuild with `mvn clean package`
-
-**Problem**: "Access denied for user 'solarpv'@'localhost'"
-- **Solution**: Verify database credentials in `Monitor.java` line 566
-- Check MySQL user exists: `mysql -u solarpv -p`
-- Ensure password matches: Check `GRANT` statements with `SHOW GRANTS FOR 'solarpv'@'localhost';`
-- Test connection: `mysql -h localhost -u solarpv -p solarpv`
-
-**Problem**: "Unknown database 'solarpv'"
-- **Solution**: Create database: `CREATE DATABASE solarpv;`
-- Verify with: `SHOW DATABASES;`
-
-### Chart Not Displaying
-
-**Problem**: Chart panel is blank
-- **Solution**: 
-  - Verify data exists in table: `SELECT COUNT(*) FROM solarusage;`
-  - Check date format is correct (YYYY-MM-DD HH:MM:SS)
-  - Ensure data is within last 30 days
-  - Click "Refresh" button manually
-  - Check console for exceptions
-
-**Problem**: Chart shows no data points
-- **Solution**:
-  - Insert test data: 
-    ```sql
-    INSERT INTO solarusage VALUES (NULL, NOW(), 5000, 2000, 1000, 75);
-    ```
-  - Verify query results: `SELECT * FROM solarusage ORDER BY dateTime DESC LIMIT 1;`
-
-### Application Won't Start
-
-**Problem**: "Exception in thread 'main'"
-- **Solution**: 
-  - Check Java version: `java -version` (must be 17+)
-  - Verify JAR file exists: `ls -la target/SolarEnegeryMonitor-1.0.1-SNAPSHOT-jar-with-dependencies.jar`
-  - Try increasing memory: `java -Xmx1024m -jar target/...jar`
-
-**Problem**: "Main class not found"
-- **Solution**:
-  - Rebuild with Maven: `mvn clean package`
-  - Verify main class in pom.xml has correct entry
-
-### GUI Rendering Issues
-
-**Problem**: Window displays but is blank/frozen
-- **Solution**:
-  - Wait 30 seconds for initial data load
-  - Check MySQL is running: `mysql -u root -p -e "SELECT 1;"`
-  - Verify database has data: `SELECT COUNT(*) FROM solarusage;`
-  - Review console for connection errors
-
-**Problem**: Text is too small or too large
-- **Solution**: 
-  - Adjust Java font settings (system-dependent)
-  - Increase screen resolution
-  - Modify font sizes in `Monitor.java` GUI configuration
-
-### Performance Issues
-
-**Problem**: Application is slow/laggy
-- **Solution**:
-  - Increase Java heap: `java -Xmx2048m -jar ...jar`
-  - Check MySQL: `SHOW PROCESSLIST;` for slow queries
-  - Reduce chart date range (limit to 90 days)
-  - Archive old data to separate table
-
-**Problem**: High CPU usage
-- **Solution**:
-  - Reduce refresh rate from 10 to 30 seconds
-  - Check for database locks: `SHOW OPEN TABLES WHERE In_use > 0;`
-  - Monitor MySQL: `SHOW STATUS;`
-
-### Data Issues
-
-**Problem**: Missing or incorrect data in display
-- **Solution**:
-  - Verify data exists: `SELECT * FROM solarusage WHERE dateTime > NOW() - INTERVAL 1 DAY;`
-  - Check for NULL values that may cause parsing errors
-  - Validate column names match code expectations
-  - Test SQL directly: `mysql -u solarpv -p solarpv -e "SELECT * FROM solarusage LIMIT 5;"`
-
-**Problem**: Cost calculations are incorrect
-- **Solution**:
-  - Verify electricity rates in code (lines 317, 348)
-  - Check battery capacity setting (line 394)
-  - Ensure power values are in Watts, not kilowatts
-  - Verify grid direction (positive = export, negative = import)
 
 ## Known Limitations
 
@@ -551,71 +327,31 @@ Edit `createDataset()` and chart rendering code to modify visualization colors.
 - No multi-user concurrent access controls
 - Chart rendering performance degrades with >1 year of data
 - No built-in data export to CSV/Excel (use database directly)
-- Fixed electricity rates (requires code modification to change)
+- Fixed electricity rates in source (requires code modification to change)
 - No alert/notification system for threshold events
 - Limited to system timezone (no multi-timezone support)
+- Database credentials are read directly from source in this version — fine for a personal/local setup, but should be externalized before any shared or production use
 
 ## Future Enhancements
 
-- **Advanced Analytics**: Machine learning for consumption prediction
-- **Mobile App**: Companion app for mobile device monitoring
-- **Cloud Sync**: Backup data to cloud storage
-- **Real-time Alerts**: Email/SMS notifications for events
-- **Multi-Site Support**: Monitor multiple solar installations
-- **Export Functionality**: CSV, PDF reports generation
-- **Energy Optimization**: Recommendations for usage optimization
-- **Battery Health**: Degradation tracking and predictions
-- **API Interface**: RESTful API for third-party integration
-- **Dark Mode**: Dark theme option for GUI
-- **Configuration UI**: GUI-based settings instead of code editing
-
-## Development Tips
-
-### Debugging Database Queries
-
-Enable MySQL query logging:
-```sql
-SET GLOBAL log_queries_not_using_indexes = 'ON';
-SET GLOBAL long_query_time = 0.5;
-```
-
-### Testing with Sample Data
-
-Insert test data:
-```sql
-INSERT INTO solarusage VALUES 
-  (NULL, DATE_SUB(NOW(), INTERVAL 1 HOUR), 4500, 1000, 500, 85),
-  (NULL, NOW(), 5000, 2000, 1000, 75);
-```
-
-### Development Build
-
-For faster builds during development:
-```bash
-mvn compile exec:java -Dexec.mainClass="au.net.dias.solar.Monitor"
-```
-
-### Debugging Console Output
-
-The application prints debug information to console. Capture it:
-```bash
-java -jar target/...jar > solar_monitor.log 2>&1 &
-tail -f solar_monitor.log
-```
+- Move credentials/rates out of source into a config file
+- Advanced analytics (consumption prediction)
+- Mobile companion app
+- Cloud sync/backup
+- Real-time alerts (email/SMS)
+- Multi-site support
+- CSV/PDF export
+- RESTful API for third-party integration
+- Configuration UI instead of code editing
 
 ## Integration with Solar Inverters
 
-This application reads data from a MySQL database populated by your solar inverter system. Setup steps:
+This application reads data from a MySQL database populated by a separate data-collection process. Setup steps:
 
-1. **Inverter Configuration**: Configure your solar inverter to log data to MySQL
-2. **Data Mapping**: Ensure inverter logs match column names in schema
-3. **Polling Interval**: Recommend 10-30 second intervals
-4. **Timezone**: Ensure inverter system clock is accurate
-
-Common inverter integration:
-- **SolarEdge**: API → Custom Python script → MySQL
-- **Fronius**: ModBus/HTTP API → Data logger → MySQL
-- **Victron**: VRM Cloud API → Integration script → MySQL
+1. **Inverter Configuration**: Configure your solar inverter/collector to log data to MySQL
+2. **Data Mapping**: Ensure the collector's output matches column names in the schema above
+3. **Polling Interval**: 10-30 second intervals recommended
+4. **Timezone**: Ensure the inverter/collector system clock is accurate
 
 ## License
 
@@ -630,10 +366,9 @@ This project is provided as-is without any specific license terms.
 
 ## Contact
 
-**Tiny Memories Laser (TML)**  
-API-Led Pty Ltd  
+**Adilson Dias**
 [GitHub](https://github.com/adilsondias-engineer)
 
 ---
 
-*This Solar Energy Monitor demonstrates real-time data visualization, financial analytics, and energy management for residential solar PV systems. A practical tool for optimizing renewable energy usage and tracking solar investment ROI.*
+*A practical desktop tool for visualizing and analyzing residential solar PV energy flow and cost/revenue over time.*
